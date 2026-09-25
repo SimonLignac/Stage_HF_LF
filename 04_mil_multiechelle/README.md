@@ -70,12 +70,13 @@ early stopping, courbes (`courbes_MIL_adaptatif.png`), test avec lames mal class
 À modifier : `DOSSIER_SORTIE`, `MANIFEST_20X`, `MANIFEST_5X`, `ENCODEUR`, `DIM_FEATURES`,
 `NB_EPOCHS` (30), `PATIENCE` (6), `SEED`, `TYPE_BIOPSIE` (libellé exact dans la colonne `type`).
 
-> ⚠ Bug connu : ligne 177, l'affichage des lames mal classées utilise une variable `diags`
-> qui n'est pas définie dans `metriques_lame`. L'évaluation sur le test plante
-> (`NameError: name 'diags' is not defined`) dès qu'une lame est mal classée, avant la matrice
-> et la sauvegarde du modèle. Correction : ajouter `diags` à la liste initialisée ligne 150 et
-> faire `diags.append(r["diagnosis"])` à côté de `types.append(...)` ligne 169 (ou retirer
-> `diag={diags[i]}` du `print`).
+> La liste des lames mal classées sur le test affiche, pour chaque erreur, le nom de la lame, le
+> vrai label, la prédiction, le score FL, le type de prélèvement et le diagnostic (colonne
+> `diagnosis` du manifest, qui doit donc exister).
+>
+> Bug corrigé : une version précédente utilisait une variable `diags` jamais créée dans
+> `metriques_lame`. L'évaluation sur le test plantait (`NameError: name 'diags' is not defined`)
+> dès qu'une lame était mal classée, avant la matrice de confusion et la sauvegarde du modèle.
 
 ---
 

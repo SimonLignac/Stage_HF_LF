@@ -147,7 +147,7 @@ def main():
     @torch.no_grad()
     def metriques_lame(sous_tableau, afficher_erreurs=False):
         modele.eval()
-        vrais, predits, scores, noms, types = [], [], [], [], []
+        vrais, predits, scores, noms, types, diags = [], [], [], [], [], []
         total_loss = 0.0
         for _, r in sous_tableau.iterrows():
             est_biopsie = (r["type"] == TYPE_BIOPSIE)
@@ -166,7 +166,7 @@ def main():
             vrais.append(label_vers_indice[r["label"]])
             predits.append(int(proba.argmax()))
             scores.append(proba[1])
-            noms.append(r["slide"]); types.append(r["type"])
+            noms.append(r["slide"]); types.append(r["type"]); diags.append(r["diagnosis"])
         vrais = np.array(vrais); predits = np.array(predits); scores = np.array(scores)
 
         if afficher_erreurs:
