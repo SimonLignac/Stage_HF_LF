@@ -13,7 +13,7 @@
 #   4) on VERIFIE si un petit sous-ensemble suffit : on compare l'AUC (validation
 #      croisee) avec toutes les features vs avec les K meilleures.
 #
-# IMPORTANT : la selection se fait uniquement sur le TRAIN (pas de fuite du test).
+# IMPORTANT : selection sur le TRAIN uniquement, refaite dans chaque pli de la CV (Pipeline).
 # ===========================================================================
 
 from pathlib import Path
