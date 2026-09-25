@@ -24,6 +24,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.feature_selection import SelectKBest, f_classif
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import cross_val_score, StratifiedGroupKFold
+from sklearn.pipeline import make_pipeline
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
@@ -95,13 +96,15 @@ def main():
     valeurs_k = [10, 25, 50, 100, 200, 500, DIM_FEATURES]
     aucs_moy = []
     for k in valeurs_k:
+        # Pipeline : standardisation et selection sont REFAITES dans chaque pli,
+        # sur les 4 plis d'entrainement uniquement (le pli d'evaluation ne sert
+        # jamais a choisir les features -> pas de fuite)
+        etapes = [StandardScaler()]
         if k < DIM_FEATURES:
-            sel = SelectKBest(score_func=f_classif, k=k)
-            X_sel = sel.fit_transform(StandardScaler().fit_transform(Xtr), ytr)
-        else:
-            X_sel = StandardScaler().fit_transform(Xtr)
-        modele = LogisticRegression(max_iter=1000, random_state=SEED)
-        scores_cv = cross_val_score(modele, X_sel, ytr, groups=gtr, cv=cv, scoring="roc_auc")
+            etapes.append(SelectKBest(score_func=f_classif, k=k))
+        etapes.append(LogisticRegression(max_iter=1000, random_state=SEED))
+        modele = make_pipeline(*etapes)
+        scores_cv = cross_val_score(modele, Xtr, ytr, groups=gtr, cv=cv, scoring="roc_auc")
         aucs_moy.append(scores_cv.mean())
         print(f"  k = {k:4d} features -> AUC moyenne (CV) = {scores_cv.mean():.3f} (+/- {scores_cv.std():.3f})")
 
